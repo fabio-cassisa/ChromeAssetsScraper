@@ -1,0 +1,27 @@
+{
+    "manifest_version": 3,
+    "name": "Network File Downloader",
+    "version": "1.0",
+    "description": "Downloads files from URLs captured in the network tab.",
+    "permissions": [
+      "downloads",
+      "activeTab",
+      "scripting"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "host_permissions": [
+      "<all_urls>"
+    ],
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+      }
+    ]
+  }
+  

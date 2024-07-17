@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Network File Downloader</title>
+    <script src="libs/jszip.min.js"></script>
+    <script src="popup.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 10px;
+        }
+        h1 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 14px;
+        }
+        #status {
+            margin-top: 20px;
+            color: green;
+            font-size: 14px;
+        }
+        #progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+        #progress-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+            border: 1px solid #ddd;
+        }
+        #progress-bar div {
+            height: 20px;
+            width: 0;
+            background-color: #4caf50;
+        }
+        #summary {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Network File Downloader</h1>
+    <label>
+        <input type="checkbox" id="imagesCheckbox" checked> Images
+    </label>
+    <label>
+        <input type="checkbox" id="videosCheckbox" checked> Videos
+    </label>
+    <label>
+        <input type="checkbox" id="fontsCheckbox" checked> Fonts
+    </label>
+    <button id="downloadBtn">Download Files</button>
+    <div id="progress-container">
+        <div id="progress-bar">
+            <div></div>
+        </div>
+        <p id="progress-text">0%</p>
+    </div>
+    <p id="status">Click the button to download files.</p>
+    <div id="summary"></div>
+</body>
+</html>

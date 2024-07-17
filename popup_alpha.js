@@ -58,20 +58,13 @@ function isFont(url) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    // Get all the elements by their IDs:
-    const downloadBtn = document.getElementById("downloadBtn");
-    const statusElem = document.getElementById("status");
-    const progressContainer = document.getElementById("progress-container");
-    const progressBar = document.getElementById("progress-bar").firstElementChild;
-    const progressText = document.getElementById("progress-text");
-    const summaryElem = document.getElementById("summary");
-
     // Event listener for the download button
     document.getElementById("downloadBtn").addEventListener("click", () => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs.length === 0) {
                 console.error("No active tabs found.");
-                statusElem.textContent = "Error: No active tab found.";
+                document.getElementById("status").textContent =
+                    "Error: No active tab found.";
                 return;
             }
 
@@ -81,13 +74,16 @@ document.addEventListener("DOMContentLoaded", function () {
             chrome.tabs.sendMessage(tabId, { action: "getHarData" }, (response) => {
                 if (chrome.runtime.lastError) {
                     console.error("Error in sendMessage:", chrome.runtime.lastError);
-                    statusElem.textContent = `Error: ${chrome.runtime.lastError.message}`;
+                    document.getElementById(
+                        "status"
+                    ).textContent = `Error: ${chrome.runtime.lastError.message}`;
                     return;
                 }
 
                 if (!response || !response.harData) {
                     console.error("No response or harData found.");
-                    statusElem.textContent = "Error: No data found.";
+                    document.getElementById("status").textContent =
+                        "Error: No data found.";
                     return;
                 }
 
@@ -102,21 +98,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 const imagesChecked = document.getElementById("imagesCheckbox").checked;
                 const videosChecked = document.getElementById("videosCheckbox").checked;
                 const fontsChecked = document.getElementById("fontsCheckbox").checked;
-
-                 // Initialize progress
-                 progressContainer.style.display = "block";
-                 summaryElem.style.display = "none";
-                 let completed = 0;
-                 let successful = 0;
-                 let failed = 0;
-                 const countByType = { images: 0, videos: 0, fonts: 0 };
-
-                 function updateProgress() {
-                    const progress = (completed / urls.length) * 100;
-                    progressBar.style.width = `${progress}%`;
-                    progressText.textContent = `${Math.round(progress)}%`;
-                }
-
 
                 // Function to determine if URL should be included based on file type
                 function shouldInclude(url) {
@@ -146,24 +127,12 @@ document.addEventListener("DOMContentLoaded", function () {
                                     return blob.then((blobData) => {
                                         // Add file to zip archive
                                         zip.file(fileName, blobData, { binary: true });
-                                        completed++;
-                                        successful++;
-                                        if (isImage(url)) countByType.images++;
-                                        else if (isVideo(url)) countByType.videos++;
-                                        else if (isFont(url)) countByType.fonts++;
-                                        updateProgress();
                                     });
                                 })
                                 .catch((error) => {
                                     console.error(`Failed to fetch ${url}:`, error);
-                                    completed++;
-                                    failed++;
-                                    updateProgress();
                                 })
                         );
-                    }  else {
-                        completed++;
-                        updateProgress();
                     }
                 });
 
@@ -173,11 +142,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         zip
                             .generateAsync({ type: "blob" })
                             .then((content) => {
-                                const blobUrl = URL.createObjectURL(content);
                                 // Save zip file using chrome.downloads API
                                 chrome.downloads.download(
                                     {
-                                        url: blobUrl,
+                                        url: URL.createObjectURL(content),
                                         filename: "downloaded_assets.zip",
                                     },
                                     (downloadId) => {
@@ -191,9 +159,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                             console.log("Zip file download started.");
                                             // No need to track download here, handle it in onChanged listener
                                         }
-
-                                        // Revoke the blob URL to free memory:
-                                        URL.revokeObjectURL(blobUrl);
                                     }
                                 );
                             })
@@ -203,22 +168,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     })
                     .catch((error) => {
                         console.error("Failed to process promises:", error);
-                    })
-                    .finally(() => {
-                        progressContainer.style.display = "none";
-                        summaryElem.style.display = "block";
-                        summaryElem.innerHTML = `
-                            <p>Total files: ${successful + failed}</p>
-                            <p>Successful: ${successful}</p>
-                            <p>Failed: ${failed}</p>
-                            <p>Images: ${countByType.images}</p>
-                            <p>Videos: ${countByType.videos}</p>
-                            <p>Fonts: ${countByType.fonts}</p>
-                        `;
-                        statusElem.textContent = `Download complete. ${successful} files downloaded, ${failed} failed.`;
                     });
 
-                statusElem.textContent = `Downloading files as a zip...`;
+                document.getElementById(
+                    "status"
+                ).textContent = `Downloading files as a zip...`;
             });
         });
     });
