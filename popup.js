@@ -15,7 +15,9 @@ function isImage(url) {
         lowerUrl.endsWith(".webp") ||
         lowerUrl.endsWith(".tif") ||
         lowerUrl.includes(".webp?") ||
-        lowerUrl.includes(".tif?")
+        lowerUrl.includes(".tif?") ||
+        lowerUrl.endsWith(".svg") ||
+        lowerUrl.includes(".svg?")
     );
 }
 
@@ -51,9 +53,7 @@ function isFont(url) {
         lowerUrl.includes(".ttf?") ||
         lowerUrl.includes(".otf?") ||
         lowerUrl.endsWith(".eot") ||
-        lowerUrl.includes(".eot?") ||
-        lowerUrl.endsWith(".svg") ||
-        lowerUrl.includes(".svg?")
+        lowerUrl.includes(".eot?")
     );
 }
 
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const summaryElem = document.getElementById("summary");
 
     // Event listener for the download button
-    document.getElementById("downloadBtn").addEventListener("click", () => {
+    downloadBtn.addEventListener("click", () => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (tabs.length === 0) {
                 console.error("No active tabs found.");
@@ -231,7 +231,6 @@ function extractUrlsFromHar(harData) {
     return urls;
 }
 
-// Function to get filename based on URL or response headers
 function getFileName(url, response) {
     let fileName = cleanFileName(url); // Implement cleanFileName function as needed
 
@@ -248,10 +247,7 @@ function getFileName(url, response) {
     if (!fileName) {
         const contentType = response.headers.get("Content-Type");
         if (contentType) {
-            const extension = mimeToExtension(contentType);
-            if (extension) {
-                fileName += extension;
-            }
+            fileName += determineExtensionFromContentType(url, contentType);
         }
     }
 
@@ -261,47 +257,81 @@ function getFileName(url, response) {
     }
 
     // Clean up the filename to ensure it ends with the correct extension
-    const lowerUrl = url.toLowerCase();
-    if (isImage(url)) {
-        if (
-            !lowerUrl.endsWith(".jpg") &&
-            !lowerUrl.endsWith(".jpeg") &&
-            !lowerUrl.endsWith(".png") &&
-            !lowerUrl.endsWith(".gif") &&
-            !lowerUrl.endsWith(".webp") &&
-            !lowerUrl.endsWith(".tif")
-        ) {
-            fileName += ".png"; // Default to .png for images if no valid extension found
-        }
-    } else if (isVideo(url)) {
-        if (
-            !lowerUrl.endsWith(".mp4") &&
-            !lowerUrl.endsWith(".webm") &&
-            !lowerUrl.endsWith(".ogg") &&
-            !lowerUrl.endsWith(".avi") &&
-            !lowerUrl.endsWith(".mov") &&
-            !lowerUrl.endsWith(".wmv")
-        ) {
-            fileName += ".mp4"; // Default to .mp4 for videos if no valid extension found
-        }
-    } else if (isFont(url)) {
-        if (
-            !lowerUrl.endsWith(".woff") &&
-            !lowerUrl.endsWith(".woff2") &&
-            !lowerUrl.endsWith(".ttf") &&
-            !lowerUrl.endsWith(".otf") &&
-            !lowerUrl.endsWith(".eot") &&
-            !lowerUrl.endsWith(".svg")
-        ) {
-            fileName += ".woff"; // Default to .woff for fonts if no valid extension found
-        }
-    }
+    fileName = ensureCorrectExtension(url, fileName);
 
     // Remove characters that are not allowed in filenames
     fileName = fileName.replace(/[<>:"/\\|?*]/g, "_");
 
     return fileName;
 }
+
+function determineExtensionFromContentType(url, contentType) {
+    const extension = mimeToExtension(contentType);
+    if (extension) {
+        // Check specific cases for SVG, GIF, WebP
+        if (isSVG(url) && extension !== ".svg") {
+            return ".svg";
+        } else if (isGIF(url) && extension !== ".gif") {
+            return ".gif";
+        } else if (isWebP(url) && extension !== ".webp") {
+            return ".webp";
+        } else {
+            return extension;
+        }
+    }
+    return "";
+}
+
+function ensureCorrectExtension(url, fileName) {
+    const lowerUrl = url.toLowerCase();
+    if (isImage(url)) {
+        if (!lowerUrl.endsWith(".jpg") &&
+            !lowerUrl.endsWith(".jpeg") &&
+            !lowerUrl.endsWith(".png") &&
+            !lowerUrl.endsWith(".gif") &&
+            !lowerUrl.endsWith(".webp") &&
+            !lowerUrl.endsWith(".tif")) {
+            fileName += ".png"; // Default to .png for images if no valid extension found
+        }
+    } else if (isVideo(url)) {
+        if (!lowerUrl.endsWith(".mp4") &&
+            !lowerUrl.endsWith(".webm") &&
+            !lowerUrl.endsWith(".ogg") &&
+            !lowerUrl.endsWith(".avi") &&
+            !lowerUrl.endsWith(".mov") &&
+            !lowerUrl.endsWith(".wmv")) {
+            fileName += ".mp4"; // Default to .mp4 for videos if no valid extension found
+        }
+    } else if (isFont(url)) {
+        if (!lowerUrl.endsWith(".woff") &&
+            !lowerUrl.endsWith(".woff2") &&
+            !lowerUrl.endsWith(".ttf") &&
+            !lowerUrl.endsWith(".otf") &&
+            !lowerUrl.endsWith(".eot")) {
+            fileName += ".woff"; // Default to .woff for fonts if no valid extension found
+        }
+    }
+    return fileName;
+}
+
+function isSVG(url) {
+    const lowerUrl = url.toLowerCase();
+    return lowerUrl.endsWith(".svg") ||
+        lowerUrl.includes(".svg?");
+}
+
+function isGIF(url) {
+    const lowerUrl = url.toLowerCase();
+    return lowerUrl.endsWith(".gif") ||
+        lowerUrl.includes(".gif?");
+}
+
+function isWebP(url) {
+    const lowerUrl = url.toLowerCase();
+    return lowerUrl.endsWith(".webp") ||
+        lowerUrl.includes(".webp?");
+}
+
 
 // Function to convert MIME type to file extension
 function mimeToExtension(mimeType) {
