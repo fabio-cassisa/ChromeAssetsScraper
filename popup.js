@@ -103,20 +103,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 const videosChecked = document.getElementById("videosCheckbox").checked;
                 const fontsChecked = document.getElementById("fontsCheckbox").checked;
 
-                 // Initialize progress
-                 progressContainer.style.display = "block";
-                 summaryElem.style.display = "none";
-                 let completed = 0;
-                 let successful = 0;
-                 let failed = 0;
-                 const countByType = { images: 0, videos: 0, fonts: 0 };
+                // Initialize progress
+                progressContainer.style.display = "block";
+                summaryElem.style.display = "none";
+                let completed = 0;
+                let successful = 0;
+                let failed = 0;
+                const countByType = { images: 0, videos: 0, fonts: 0 };
 
-                 function updateProgress() {
+                function updateProgress() {
                     const progress = (completed / urls.length) * 100;
                     progressBar.style.width = `${progress}%`;
                     progressText.textContent = `${Math.round(progress)}%`;
                 }
-
 
                 // Function to determine if URL should be included based on file type
                 function shouldInclude(url) {
@@ -284,30 +283,21 @@ function determineExtensionFromContentType(url, contentType) {
 
 function ensureCorrectExtension(url, fileName) {
     const lowerUrl = url.toLowerCase();
+    const hasValidExtension = (fileName) => {
+        const ext = fileName.slice(fileName.lastIndexOf('.')).toLowerCase();
+        return ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.tif', '.svg', '.mp4', '.webm', '.ogg', '.avi', '.mov', '.wmv', '.woff', '.woff2', '.ttf', '.otf', '.eot'].includes(ext);
+    };
+
     if (isImage(url)) {
-        if (!lowerUrl.endsWith(".jpg") &&
-            !lowerUrl.endsWith(".jpeg") &&
-            !lowerUrl.endsWith(".png") &&
-            !lowerUrl.endsWith(".gif") &&
-            !lowerUrl.endsWith(".webp") &&
-            !lowerUrl.endsWith(".tif")) {
+        if (!hasValidExtension(fileName)) {
             fileName += ".png"; // Default to .png for images if no valid extension found
         }
     } else if (isVideo(url)) {
-        if (!lowerUrl.endsWith(".mp4") &&
-            !lowerUrl.endsWith(".webm") &&
-            !lowerUrl.endsWith(".ogg") &&
-            !lowerUrl.endsWith(".avi") &&
-            !lowerUrl.endsWith(".mov") &&
-            !lowerUrl.endsWith(".wmv")) {
+        if (!hasValidExtension(fileName)) {
             fileName += ".mp4"; // Default to .mp4 for videos if no valid extension found
         }
     } else if (isFont(url)) {
-        if (!lowerUrl.endsWith(".woff") &&
-            !lowerUrl.endsWith(".woff2") &&
-            !lowerUrl.endsWith(".ttf") &&
-            !lowerUrl.endsWith(".otf") &&
-            !lowerUrl.endsWith(".eot")) {
+        if (!hasValidExtension(fileName)) {
             fileName += ".woff"; // Default to .woff for fonts if no valid extension found
         }
     }
@@ -332,36 +322,30 @@ function isWebP(url) {
         lowerUrl.includes(".webp?");
 }
 
-
 // Function to convert MIME type to file extension
 function mimeToExtension(mimeType) {
-    switch (mimeType) {
-        case "image/jpeg":
-            return ".jpg";
-        case "image/png":
-            return ".png";
-        case "image/gif":
-            return ".gif";
-        case "video/mp4":
-            return ".mp4";
-        case "video/webm":
-            return ".webm";
-        case "video/ogg":
-            return ".ogg";
-        case "video/avi":
-            return ".avi";
-        case "application/font-woff":
-            return ".woff";
-        case "application/font-woff2":
-            return ".woff2";
-        case "application/x-font-ttf":
-            return ".ttf";
-        case "application/x-font-opentype":
-            return ".otf";
-        default:
-            return "";
-    }
+    const mimeMap = {
+        "image/jpeg": ".jpg",
+        "image/png": ".png",
+        "image/gif": ".gif",
+        "image/webp": ".webp",
+        "image/tiff": ".tif",
+        "image/svg+xml": ".svg",
+        "video/mp4": ".mp4",
+        "video/webm": ".webm",
+        "video/ogg": ".ogg",
+        "video/avi": ".avi",
+        "video/mov": ".mov",
+        "video/wmv": ".wmv",
+        "font/woff": ".woff",
+        "font/woff2": ".woff2",
+        "font/ttf": ".ttf",
+        "font/otf": ".otf",
+        "application/vnd.ms-fontobject": ".eot"
+    };
+    return mimeMap[mimeType] || "";
 }
+
 
 // Define the function to clean up file names
 function cleanFileName(url) {
