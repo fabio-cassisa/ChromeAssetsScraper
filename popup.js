@@ -17,7 +17,9 @@ function isImage(url) {
         lowerUrl.includes(".webp?") ||
         lowerUrl.includes(".tif?") ||
         lowerUrl.endsWith(".svg") ||
-        lowerUrl.includes(".svg?")
+        lowerUrl.includes(".svg?") ||
+        lowerUrl.endsWith(".avif") || //Added support for .avif
+        lowerUrl.includes(".avif?")
     );
 }
 
@@ -274,6 +276,8 @@ function determineExtensionFromContentType(url, contentType) {
             return ".gif";
         } else if (isWebP(url) && extension !== ".webp") {
             return ".webp";
+        } else if (isAVIF(url) && extension !== ".avif") { // Added support for AVIF
+            return ".avif";    
         } else {
             return extension;
         }
@@ -285,7 +289,7 @@ function ensureCorrectExtension(url, fileName) {
     const lowerUrl = url.toLowerCase();
     const hasValidExtension = (fileName) => {
         const ext = fileName.slice(fileName.lastIndexOf('.')).toLowerCase();
-        return ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.tif', '.svg', '.mp4', '.webm', '.ogg', '.avi', '.mov', '.wmv', '.woff', '.woff2', '.ttf', '.otf', '.eot'].includes(ext);
+        return ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.tif', '.svg', '.mp4', '.webm', '.ogg', '.avi', '.mov', '.wmv', '.woff', '.woff2', '.ttf', '.otf', '.eot'].includes(ext);
     };
 
     if (isImage(url)) {
@@ -322,6 +326,11 @@ function isWebP(url) {
         lowerUrl.includes(".webp?");
 }
 
+function isAVIF(url) {
+    const lowerUrl = url.toLowerCase();
+    return lowerUrl.endsWith(".avif") || lowerUrl.includes(".avif?"); // Added support for AVIF
+}
+
 // Function to convert MIME type to file extension
 function mimeToExtension(mimeType) {
     const mimeMap = {
@@ -329,6 +338,7 @@ function mimeToExtension(mimeType) {
         "image/png": ".png",
         "image/gif": ".gif",
         "image/webp": ".webp",
+        "image/avif": ".avif", // Added support for AVIF
         "image/tiff": ".tif",
         "image/svg+xml": ".svg",
         "video/mp4": ".mp4",
