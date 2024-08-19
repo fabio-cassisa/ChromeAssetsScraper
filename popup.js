@@ -71,6 +71,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const colorSquaresContainer = document.getElementById('color-squares');
     const tooltip = document.getElementById('tooltip');
 
+     // Query for the active tab in the current window
+     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        var activeTab = tabs[0];
+        var activeTabUrl = new URL(activeTab.url);
+        
+        // Display the hostname (e.g., 'example.com') in the popup
+        document.getElementById('currentWebsite').textContent = activeTabUrl.hostname;
+    });
 
     // Function to show the custom alert
     function showCustomAlert(message) {
@@ -299,14 +307,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     .finally(() => {
                         progressContainer.style.display = "none";
                         summaryElem.style.display = "block";
-                        summaryElem.innerHTML = `
+                        summaryElem.innerHTML = /*`
                             <p>Total files: ${successful + failed}</p>
                             <p>Successful: ${successful}</p>
-                            <p>Failed: ${failed}</p>
-                            <p>Images: ${countByType.images}</p>
-                            <p>Videos: ${countByType.videos}</p>
-                            <p>Fonts: ${countByType.fonts}</p>
-                        `;
+                            <p>Failed: ${failed}</p>*/
+                            `<p class="inter-regular">Images: ${countByType.images} - Videos: ${countByType.videos} - Fonts: ${countByType.fonts}</p>`;
                         statusElem.textContent = `Download complete. ${successful} files downloaded, ${failed} failed.`;
                     });
 

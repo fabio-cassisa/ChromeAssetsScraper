@@ -30,8 +30,8 @@ Here how to use the font:
 }
 
 body {
-    width: 393px;
-    height: 852px;
+    width: auto;
+    height: 100vh;
     background-color: #8785A2;
     font-family: Arial, sans-serif;
     padding: 0;
@@ -47,6 +47,12 @@ h1 {
 
 #websiteOn { 
     letter-spacing: 0.7px;
+}
+
+#currentWebsite {
+    padding-top: 10px;
+    padding-bottom: 20px;
+    font-size: 16px;
 }
 
 button {
@@ -70,7 +76,7 @@ span {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 .labelWrapper {
@@ -81,6 +87,15 @@ span {
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
+}
+
+#downloadBtn {
+    transition: transform 0.3s ease; 
+    cursor: pointer;
+}
+
+#downloadBtn:hover {
+    transform: scale(1.1);
 }
 
 /* Hide the default checkbox */
@@ -120,7 +135,6 @@ input[type="checkbox"] + span:focus::before {
 
 #status {
     margin-top: 5px;
-    margin-bottom: 15px;
     color: #FFE2E2;
     font-size: 14px;
 }
@@ -148,9 +162,17 @@ input[type="checkbox"] + span:focus::before {
 
 #summary {
     display: none;
-    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-top: 5px;
 }
 
+.colorWrapper { 
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
 
 .color-square {
     width: 50px;

@@ -4,6 +4,7 @@
     "version": "1.0",
     "description": "Downloads files from URLs captured in the network tab.",
     "permissions": [
+      "tabs",
       "downloads",
       "activeTab",
       "scripting", 
