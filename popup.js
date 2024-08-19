@@ -1,5 +1,3 @@
-// Define utility functions outside the event listener so they are accessible globally
-
 // Function to check if URL is an image
 function isImage(url) {
     const lowerUrl = url.toLowerCase();
@@ -20,6 +18,7 @@ function isImage(url) {
         lowerUrl.includes(".svg?") ||
         lowerUrl.endsWith(".avif") || //Added support for .avif
         lowerUrl.includes(".avif?")
+        //add .jfif support???? -- miguel's whatsapp thingy
     );
 }
 

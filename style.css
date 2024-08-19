@@ -5,11 +5,41 @@ Here how to use the font:
     font-variation-settings: 'wght' 400, 'wdth' 100, 'CUTT' 75;
   }
 */
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+.inter-regular {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  color: #FFC7C7;
+}
+
+.inter-medium {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    color: #FFC7C7;
+}
+
+.inter-extraLightItalic {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 200;
+    font-style: italic;
+    color: #FFC7C7;
+}
 
 body {
+    width: 393px;
+    height: 852px;
+    background-color: #8785A2;
     font-family: Arial, sans-serif;
-    padding: 10px;
+    padding: 0;
+    margin: 0;
 }
+
 h1 {
     font-size: 18px;
     margin-bottom: 10px;
@@ -41,4 +71,11 @@ button {
 #summary {
     display: none;
     margin-top: 20px;
+}
+
+.mainWrapper { 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
