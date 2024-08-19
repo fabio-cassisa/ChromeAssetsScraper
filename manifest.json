@@ -1,12 +1,14 @@
 {
     "manifest_version": 3,
-    "name": "Network File Downloader",
+    "name": "Net Assets Scraper",
     "version": "1.0",
     "description": "Downloads files from URLs captured in the network tab.",
     "permissions": [
+      "tabs",
       "downloads",
       "activeTab",
-      "scripting"
+      "scripting", 
+      "clipboardWrite" 
     ],
     "background": {
       "service_worker": "background.js"

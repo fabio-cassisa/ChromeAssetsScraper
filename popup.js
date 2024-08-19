@@ -67,6 +67,106 @@ document.addEventListener("DOMContentLoaded", function () {
     const progressText = document.getElementById("progress-text");
     const summaryElem = document.getElementById("summary");
 
+    // Handle colors fetching and display
+    const colorSquaresContainer = document.getElementById('color-squares');
+    const tooltip = document.getElementById('tooltip');
+
+     // Query for the active tab in the current window
+     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
+        var activeTab = tabs[0];
+        var activeTabUrl = new URL(activeTab.url);
+        
+        // Display the hostname (e.g., 'example.com') in the popup
+        document.getElementById('currentWebsite').textContent = activeTabUrl.hostname;
+    });
+
+    // Function to show the custom alert
+    function showCustomAlert(message) {
+        const modal = document.getElementById('custom-alert');
+        const alertMessage = document.getElementById('alert-message');
+        const closeAlertButton = document.getElementById('close-alert-button');
+        //const closeIcon = document.getElementById('close-alert');
+
+        alertMessage.textContent = message;
+        modal.style.display = 'block';
+
+        // Close the modal after 5 seconds
+        const autoCloseTimeout = setTimeout(() => {
+            modal.style.display = 'none';
+        }, 3000); // 3sec so far!
+
+         // Close the modal when the user clicks the button
+        closeAlertButton.onclick = function () {
+            clearTimeout(autoCloseTimeout); // Cancel the auto-close if user clicks OK
+            modal.style.display = 'none';
+        };
+
+        // Close the modal when the user clicks the button or the close icon
+        /*
+        closeAlertButton.onclick = closeIcon.onclick = function () {
+            modal.style.display = 'none';
+        };
+        */
+
+        // Close the modal when the user clicks outside of it
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    }
+
+    // Color picking main logic here: 
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        // Error handling to check if active tabs have been found or not:
+        if (tabs.length === 0) {
+            console.error("No active tabs found.");
+            return;
+        }
+
+        const tabId = tabs[0].id;
+        
+        chrome.tabs.sendMessage(tabId, { action: "getColors" }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error("Error in sendMessage:", chrome.runtime.lastError.message);
+                return;
+            }
+
+            if (response && response.colors) {
+                response.colors.forEach(color => {
+                    const square = document.createElement('div');
+                    square.classList.add('color-square');
+                    square.style.backgroundColor = color;
+                    square.title = color;
+                    
+                    // Alert to give feedabck when clicked and copied -- to be customized!! 
+                    square.addEventListener('click', () => {
+                        navigator.clipboard.writeText(color).then(() => {
+                            showCustomAlert(`Copied ${color} to clipboard!`);
+                        });
+                    });
+
+                    // Adj tooltips' sizes depending on screenszize: 
+                    square.addEventListener('mouseenter', (event) => {
+                        const rect = square.getBoundingClientRect();
+                        tooltip.textContent = color;
+                        tooltip.style.left = `${rect.left + window.scrollX}px`;
+                        tooltip.style.top = `${rect.top - tooltip.offsetHeight + window.scrollY - 5}px`;
+                        tooltip.style.opacity = 1;
+                    });
+
+                    square.addEventListener('mouseleave', () => {
+                        tooltip.style.opacity = 0;
+                    });
+
+                    colorSquaresContainer.appendChild(square);
+                });
+            } else {
+                console.error("No colors found or invalid response.");
+            }
+        });
+    });
+
     // Event listener for the download button
     downloadBtn.addEventListener("click", () => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -207,14 +307,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     .finally(() => {
                         progressContainer.style.display = "none";
                         summaryElem.style.display = "block";
-                        summaryElem.innerHTML = `
+                        summaryElem.innerHTML = /*`
                             <p>Total files: ${successful + failed}</p>
                             <p>Successful: ${successful}</p>
-                            <p>Failed: ${failed}</p>
-                            <p>Images: ${countByType.images}</p>
-                            <p>Videos: ${countByType.videos}</p>
-                            <p>Fonts: ${countByType.fonts}</p>
-                        `;
+                            <p>Failed: ${failed}</p>*/
+                            `<p class="inter-regular">Images: ${countByType.images} - Videos: ${countByType.videos} - Fonts: ${countByType.fonts}</p>`;
                         statusElem.textContent = `Download complete. ${successful} files downloaded, ${failed} failed.`;
                     });
 
