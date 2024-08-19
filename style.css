@@ -36,10 +36,11 @@ body {
     font-family: Arial, sans-serif;
     padding: 0;
     margin: 0;
+    overflow: hidden;
 }
 
 h1 {
-    font-size: 20px;
+    font-size: 18px;
     color: #FFC7C7;
     padding: 0;
     margin: 0;
@@ -50,8 +51,8 @@ h1 {
 }
 
 #currentWebsite {
-    padding-top: 10px;
-    padding-bottom: 20px;
+    margin-top: 5px;
+    margin-bottom: 10px;
     font-size: 16px;
 }
 
@@ -68,7 +69,7 @@ p {
 }
 
 span {
-    font-size: 16px;
+    font-size: 14px;
     color: #FFC7C7;
 }
 
@@ -80,8 +81,8 @@ span {
 }
 
 .labelWrapper {
-    padding-top: 15px;
-    padding-bottom: 20px;
+    margin-top: 5px;
+    margin-bottom: 10px;
     gap: 5px;
     display: flex;
     flex-direction: column;
@@ -134,14 +135,14 @@ input[type="checkbox"] + span:focus::before {
 }
 
 #status {
-    margin-top: 5px;
+    margin-top: 3.5px;
     color: #FFE2E2;
     font-size: 14px;
 }
 
 #progress-container {
     display: none;
-    margin-top: 20px;
+    margin-top: 5px;
     width: 80%;
 }
 
@@ -162,12 +163,11 @@ input[type="checkbox"] + span:focus::before {
 
 #summary {
     display: none;
-    margin-bottom: 20px;
     margin-top: 5px;
 }
 
 .colorWrapper { 
-    padding-top: 20px;
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -258,4 +258,10 @@ input[type="checkbox"] + span:focus::before {
 
 #close-alert-button:hover {
     background-color: #8785A2;
+}
+
+#info {
+    margin-top: 10px;
+    font-size: 12px;
+    text-align: center;
 }
