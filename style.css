@@ -12,7 +12,6 @@ Here how to use the font:
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  color: #FFC7C7;
 }
 
 .inter-medium {
@@ -20,7 +19,6 @@ Here how to use the font:
     font-optical-sizing: auto;
     font-weight: 500;
     font-style: normal;
-    color: #FFC7C7;
 }
 
 .inter-extraLightItalic {
@@ -28,7 +26,7 @@ Here how to use the font:
     font-optical-sizing: auto;
     font-weight: 200;
     font-style: italic;
-    color: #FFC7C7;
+    
 }
 
 body {
@@ -41,53 +39,139 @@ body {
 }
 
 h1 {
-    font-size: 18px;
-    margin-bottom: 10px;
+    font-size: 20px;
+    color: #FFC7C7;
+    padding: 0;
+    margin: 0;
 }
+
+#websiteOn { 
+    letter-spacing: 0.7px;
+}
+
 button {
     margin-top: 10px;
     padding: 10px;
     font-size: 14px;
 }
+
+p {
+    padding: 0;
+    margin: 0;
+    color: #FFC7C7;
+}
+
+span {
+    font-size: 16px;
+    color: #FFC7C7;
+}
+
+.mainWrapper { 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.labelWrapper {
+    padding-top: 15px;
+    padding-bottom: 20px;
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+/* Hide the default checkbox */
+input[type="checkbox"] {
+    display: none;
+}
+
+/* Custom checkbox style */
+input[type="checkbox"] + span::before {
+    content: '';
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+    border: 1px solid #FFC7C7;
+    border-radius: 4px;
+    background-color: #FFE2E2;
+    vertical-align: middle;
+    margin-right: 7px;
+    transition: all 0.3s ease;
+}
+
+/* Checked state */
+input[type="checkbox"]:checked + span::before {
+    background-color: #FFC7C7; /* Replace with your hex color */
+    border-color: #FFC7C7;
+    background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns%3D"http://www.w3.org/2000/svg" viewBox%3D"0 0 24 24" fill%3D"white"%3E%3Cpath d%3D"M9 19l-7-7 1.41-1.41L9 16.17l11.59-11.59L22 6l-13 13z"/%3E%3C/svg%3E');
+    background-size: 14px;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Optional: Hover and focus state for the checkbox */
+input[type="checkbox"] + span:hover::before,
+input[type="checkbox"] + span:focus::before {
+    border-color: #8785A2; /* Change to your desired color */
+}
+
 #status {
-    margin-top: 20px;
-    color: green;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    color: #FFE2E2;
     font-size: 14px;
 }
+
 #progress-container {
     display: none;
     margin-top: 20px;
+    width: 80%;
 }
+
 #progress-bar {
     width: 100%;
-    background-color: #f3f3f3;
-    border: 1px solid #ddd;
+    background-color: #FFE2E2;
+    border: 1.5px solid #FFC7C7;
+    border-radius: 16px;
 }
+
 #progress-bar div {
     height: 20px;
     width: 0;
-    background-color: #4caf50;
+    background-color: #FFC7C7;
+    border: 1px solid #FFC7C7;
+    border-radius: 16px;
 }
+
 #summary {
     display: none;
     margin-top: 20px;
 }
 
+
 .color-square {
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     cursor: pointer;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 0px solid #FFE2E2;
+    border-radius: 10px;
 }
+
+.glassColor {
+    background: rgba(246, 246, 246, 0.25);                       
+    backdrop-filter: blur(10px);
+}
+
 
 .tooltip {
     position: absolute;
-    background-color: #333;
-    color: #fff;
-    padding: 5px;
-    border-radius: 4px;
-    font-size: 12px;
+    color: #8785A2;
+    padding: 10px;
+    border-radius: 20px;
+    font-size: 14px;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
@@ -99,9 +183,57 @@ button {
     opacity: 1;
 }
 
-.mainWrapper { 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+
+/* Custom modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 999; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%;
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.2); /* Black w/ opacity */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 60% auto;
+    padding: 20px;
+    border: 1px solid #FFC7C7;
+    border-radius: 20px;
+    width: 60%; 
+    max-width: 400px; 
+    text-align: center;
+    font-size: 16px;
+}
+
+.close-button {
+    color: #FFE2E2;
+    float: right;
+    margin-top: -10px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #FFC7C7;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#close-alert-button {
+    background-color: #FFE2E2; 
+    color: #FFC7C7;
+    padding: 10px 20px;
+    margin-top: 15px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#close-alert-button:hover {
+    background-color: #8785A2;
 }

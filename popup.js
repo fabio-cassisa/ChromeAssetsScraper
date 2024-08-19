@@ -72,6 +72,42 @@ document.addEventListener("DOMContentLoaded", function () {
     const tooltip = document.getElementById('tooltip');
 
 
+    // Function to show the custom alert
+    function showCustomAlert(message) {
+        const modal = document.getElementById('custom-alert');
+        const alertMessage = document.getElementById('alert-message');
+        const closeAlertButton = document.getElementById('close-alert-button');
+        //const closeIcon = document.getElementById('close-alert');
+
+        alertMessage.textContent = message;
+        modal.style.display = 'block';
+
+        // Close the modal after 5 seconds
+        const autoCloseTimeout = setTimeout(() => {
+            modal.style.display = 'none';
+        }, 3000); // 3sec so far!
+
+         // Close the modal when the user clicks the button
+        closeAlertButton.onclick = function () {
+            clearTimeout(autoCloseTimeout); // Cancel the auto-close if user clicks OK
+            modal.style.display = 'none';
+        };
+
+        // Close the modal when the user clicks the button or the close icon
+        /*
+        closeAlertButton.onclick = closeIcon.onclick = function () {
+            modal.style.display = 'none';
+        };
+        */
+
+        // Close the modal when the user clicks outside of it
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+    }
+
     // Color picking main logic here: 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         // Error handling to check if active tabs have been found or not:
@@ -98,7 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Alert to give feedabck when clicked and copied -- to be customized!! 
                     square.addEventListener('click', () => {
                         navigator.clipboard.writeText(color).then(() => {
-                            alert(`Copied ${color} to clipboard!`);
+                            showCustomAlert(`Copied ${color} to clipboard!`);
                         });
                     });
 
