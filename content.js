@@ -1,3 +1,4 @@
+// HAR data functionalities:
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getHarData") {
     const harData = collectHarData();
@@ -25,6 +26,7 @@ function collectHarData() {
   return { log: { entries: harEntries } };
 }
 
+// CSS colorPicker functionalities:
 function extractColors() {
   const colorsMap = {};
 

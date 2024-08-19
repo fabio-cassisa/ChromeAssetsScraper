@@ -67,6 +67,33 @@ document.addEventListener("DOMContentLoaded", function () {
     const progressText = document.getElementById("progress-text");
     const summaryElem = document.getElementById("summary");
 
+    // Handle colors fetching and display
+    const colorSquaresContainer = document.getElementById('color-squares');
+
+    // Color picking main logic here: 
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        const tabId = tabs[0].id;
+        
+        chrome.tabs.sendMessage(tabId, { action: "getColors" }, (response) => {
+            if (response && response.colors) {
+                response.colors.forEach(color => {
+                    const square = document.createElement('div');
+                    square.classList.add('color-square');
+                    square.style.backgroundColor = color;
+                    square.title = color;
+                    
+                    square.addEventListener('click', () => {
+                        navigator.clipboard.writeText(color).then(() => {
+                            alert(`Copied ${color} to clipboard!`);
+                        });
+                    });
+
+                    colorSquaresContainer.appendChild(square);
+                });
+            }
+        });
+    });
+
     // Event listener for the download button
     downloadBtn.addEventListener("click", () => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {

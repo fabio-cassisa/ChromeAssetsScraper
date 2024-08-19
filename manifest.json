@@ -6,7 +6,8 @@
     "permissions": [
       "downloads",
       "activeTab",
-      "scripting"
+      "scripting", 
+      "clipboardWrite" 
     ],
     "background": {
       "service_worker": "background.js"
