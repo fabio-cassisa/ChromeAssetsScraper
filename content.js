@@ -1,3 +1,6 @@
+// Checking if injection has been done correctly in the page when loaeded: 
+console.log("Content script loaded on this page.");
+
 // HAR data functionalities:
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getHarData") {
@@ -27,25 +30,38 @@ function collectHarData() {
 }
 
 // CSS colorPicker functionalities:
+function rgbToHex(rgb) {
+  const rgba = rgb.match(/\d+/g);
+  let hex = "#";
+  
+  for (let i = 0; i < 3; i++) {
+      const hexComponent = parseInt(rgba[i], 10).toString(16).padStart(2, '0');
+      hex += hexComponent;
+  }
+  
+  return hex;
+}
+
 function extractColors() {
   const colorsMap = {};
 
-  // Collect computed styles from all elements
   document.querySelectorAll('*').forEach(element => {
       const computedStyles = window.getComputedStyle(element);
       const color = computedStyles.color;
       const backgroundColor = computedStyles.backgroundColor;
 
-      if (color && color !== 'rgba(0, 0, 0, 0)') {
-          colorsMap[color] = (colorsMap[color] || 0) + 1;
+      const hexColor = rgbToHex(color);
+      const hexBackgroundColor = rgbToHex(backgroundColor);
+
+      if (hexColor && hexColor !== '#00000000') {
+          colorsMap[hexColor] = (colorsMap[hexColor] || 0) + 1;
       }
 
-      if (backgroundColor && backgroundColor !== 'rgba(0, 0, 0, 0)') {
-          colorsMap[backgroundColor] = (colorsMap[backgroundColor] || 0) + 1;
+      if (hexBackgroundColor && hexBackgroundColor !== '#00000000') {
+          colorsMap[hexBackgroundColor] = (colorsMap[hexBackgroundColor] || 0) + 1;
       }
   });
 
-  // Sort colors by frequency and get top 5
   const sortedColors = Object.entries(colorsMap)
       .sort(([, countA], [, countB]) => countB - countA)
       .slice(0, 5)
@@ -55,9 +71,7 @@ function extractColors() {
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === 'getHarData') {
-      // Handle existing HAR data fetching logic
-  } else if (message.action === 'getColors') {
+  if (message.action === 'getColors') {
       const topColors = extractColors();
       sendResponse({ colors: topColors });
   }

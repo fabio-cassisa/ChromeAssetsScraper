@@ -69,12 +69,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Handle colors fetching and display
     const colorSquaresContainer = document.getElementById('color-squares');
+    const tooltip = document.getElementById('tooltip');
+
 
     // Color picking main logic here: 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        // Error handling to check if active tabs have been found or not:
+        if (tabs.length === 0) {
+            console.error("No active tabs found.");
+            return;
+        }
+
         const tabId = tabs[0].id;
         
         chrome.tabs.sendMessage(tabId, { action: "getColors" }, (response) => {
+            if (chrome.runtime.lastError) {
+                console.error("Error in sendMessage:", chrome.runtime.lastError.message);
+                return;
+            }
+
             if (response && response.colors) {
                 response.colors.forEach(color => {
                     const square = document.createElement('div');
@@ -82,14 +95,30 @@ document.addEventListener("DOMContentLoaded", function () {
                     square.style.backgroundColor = color;
                     square.title = color;
                     
+                    // Alert to give feedabck when clicked and copied -- to be customized!! 
                     square.addEventListener('click', () => {
                         navigator.clipboard.writeText(color).then(() => {
                             alert(`Copied ${color} to clipboard!`);
                         });
                     });
 
+                    // Adj tooltips' sizes depending on screenszize: 
+                    square.addEventListener('mouseenter', (event) => {
+                        const rect = square.getBoundingClientRect();
+                        tooltip.textContent = color;
+                        tooltip.style.left = `${rect.left + window.scrollX}px`;
+                        tooltip.style.top = `${rect.top - tooltip.offsetHeight + window.scrollY - 5}px`;
+                        tooltip.style.opacity = 1;
+                    });
+
+                    square.addEventListener('mouseleave', () => {
+                        tooltip.style.opacity = 0;
+                    });
+
                     colorSquaresContainer.appendChild(square);
                 });
+            } else {
+                console.error("No colors found or invalid response.");
             }
         });
     });
